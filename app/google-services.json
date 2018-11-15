@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "1020809255454",
+    "firebase_url": "https://boan-744fb.firebaseio.com",
+    "project_id": "boan-744fb",
+    "storage_bucket": "boan-744fb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1020809255454:android:0cef6e2d4f800d3d",
+        "android_client_info": {
+          "package_name": "com.example.cairashields.boan"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1020809255454-6sb66jqjpos8us7b9u90qflq32f8gqmo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC0XCNrlmiTmQMcCErcjkS-Q5kqP-4gK30"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
