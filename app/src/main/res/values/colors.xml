@@ -1,7 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#B0A3D4</color>
-    <color name="colorPrimaryDark">#CEBACF</color>
-    <color name="colorAccent">#D8D8F6</color>
+
+    <color name="black">#000000</color>
+
+    <color name="light_purple">#B0A3D4</color>
+    <color name="slightly_purple">#CEBACF</color>
+    <color name="blush_purple">#D8D8F6</color>
     <color name="white">#FFFFFF</color>
+
+    <color name="colorPrimaryDark">#E16036</color>
+    <color name="colorPrimary">#E3170A</color>
+    <color name="colorAccent">#FF9B71</color>
+    <color name="pinkish_peach">#F4796B</color>
+    <color name="blush_pink">#F4998D</color>
+
+    <color name="pleated_green">#157A6E</color>
+    <color name="christmas_tree">#499F68</color>
+    <color name="light_green">#77B28C</color>
 </resources>

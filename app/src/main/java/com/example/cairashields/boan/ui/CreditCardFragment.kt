@@ -1,5 +1,6 @@
 package com.example.cairashields.boan.ui
 
+import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
@@ -26,13 +27,15 @@ import javax.security.auth.callback.Callback
 class CreditCardFragment : Fragment(){
 
     @BindView(R.id.card_input_widget) lateinit var mCardInputWidget: CardInputWidget
-    @BindView(R.id.lend)lateinit var mLender: LinearLayout
+    @BindView(R.id.lend) lateinit var mLender: LinearLayout
     @BindView(R.id.borrow)lateinit var mBorrower: LinearLayout
     @BindView(R.id.complete_card_info)lateinit var mDone: Button
 
 
     var mDatabaseReference: DatabaseReference? = null
     private lateinit var auth: FirebaseAuth
+
+    var isLender = false
     fun newInstance(): CreditCardFragment{
         return CreditCardFragment()
     }
@@ -40,18 +43,34 @@ class CreditCardFragment : Fragment(){
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val root = inflater.inflate(R.layout.credit_card_fragment, container, false)
         ButterKnife.bind(this, root)
-        mDatabaseReference = FirebaseDatabase.getInstance().reference
+        val database = FirebaseDatabase.getInstance()
+        mDatabaseReference = database.reference
         auth = FirebaseAuth.getInstance()
-        return root
-    }
 
-    override fun onStart() {
-        super.onStart()
+        mLender = root.findViewById(R.id.lend)
+        mBorrower = root.findViewById(R.id.borrow)
+        mDone = root.findViewById(R.id.complete_card_info)
+        mCardInputWidget = root.findViewById(R.id.card_input_widget)
+
+        mLender.setOnClickListener{
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                mLender.setBackgroundColor(context!!.getColor(R.color.colorPrimary))
+                mBorrower.setBackgroundColor(context!!.getColor(R.color.white))
+            }
+            isLender = true
+        }
+        mBorrower.setOnClickListener{
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                mBorrower.setBackgroundColor(context!!.getColor(R.color.colorPrimary))
+                mLender.setBackgroundColor(context!!.getColor(R.color.white))
+            }
+            isLender = false
+        }
         mDone.setOnClickListener {
             val cardToSave = mCardInputWidget.card
             if (cardToSave == null) {
                 //Card not good
-               // mErrorDialogHandler.showError("Invalid Card Data")
+                // mErrorDialogHandler.showError("Invalid Card Data")
             }else{
                 //Card info is good
                 var stripe =  Stripe(context!!, "pk_test_DkwOovybuSQN6dDkVLOODzn1");
@@ -72,13 +91,20 @@ class CreditCardFragment : Fragment(){
 
             }
         }
+        return root
+    }
+
+    override fun onStart() {
+        super.onStart()
     }
 
     fun createUserWithCard(token: String){
         val name = auth.currentUser!!.displayName
         val email = auth.currentUser!!.email
-        val user = Users(name, email, token)
+        val user = Users(name, email, token, isLender)
 
-        mDatabaseReference!!.child("users").child(auth.currentUser!!.uid).setValue(user)
+        mDatabaseReference!!.child("users").child(auth.currentUser!!.uid).setValue(user).addOnCompleteListener {
+            Log.v("USER ADDED: ", "check database now." )
+        }
     }
 }

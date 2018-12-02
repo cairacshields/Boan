@@ -23,6 +23,7 @@ import android.support.annotation.NonNull
 import android.support.v4.view.ViewPager
 import android.util.Log
 import com.example.cairashields.boan.adapters.FragmentViewPagerAdapter
+import com.example.cairashields.boan.ui.BorrowForm
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.wajahatkarim3.easyvalidation.core.view_ktx.textEqualTo
@@ -34,12 +35,20 @@ class MainActivity : AppCompatActivity() {
 
     @Nullable @BindView(R.id.pager) lateinit var mPager: ViewPager
 
+    private lateinit var auth: FirebaseAuth
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         ButterKnife.bind(this)
-
         mPager = findViewById(R.id.pager)
+
+        // Initialize Firebase Auth
+        auth = FirebaseAuth.getInstance()
+        if(auth.currentUser != null){
+            val intent = Intent(this@MainActivity, BorrowForm::class.java)
+            startActivity(intent)
+        }
         mPager.adapter = FragmentViewPagerAdapter(supportFragmentManager)
     }
 

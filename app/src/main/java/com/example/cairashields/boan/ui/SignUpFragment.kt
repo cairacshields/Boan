@@ -13,6 +13,7 @@ import android.widget.EditText
 import android.widget.Toast
 import butterknife.BindView
 import butterknife.ButterKnife
+import com.example.cairashields.boan.MainActivity
 import com.example.cairashields.boan.R
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.IdpResponse
@@ -98,7 +99,7 @@ class SignUpFragment: Fragment(){
                     .check()
             if(emailValid && passwordValid && passwordsEqual) {
                 auth.signInWithEmailAndPassword(email!!, password!!)
-                        .addOnCompleteListener(activity!!.parent) { task ->
+                        .addOnCompleteListener(activity!! as MainActivity) { task ->
                             if (task.isSuccessful) {
                                 // Sign in success, update UI with the signed-in user's information
                                 Log.d(TAG, "signInWithEmail:success")
@@ -142,7 +143,7 @@ class SignUpFragment: Fragment(){
                     .check()
             if(emailValid && passwordValid && passwordsEqual) {
                 auth.createUserWithEmailAndPassword(email!!, password!!)
-                        .addOnCompleteListener(activity!!.parent) { task ->
+                        .addOnCompleteListener(activity as MainActivity) { task ->
                             if (task.isSuccessful) {
                                 // Sign in success, update UI with the signed-in user's information
                                 Log.d(TAG, "createUserWithEmail:success")
