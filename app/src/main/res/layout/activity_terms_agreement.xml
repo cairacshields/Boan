@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:id="@+id/borrow_details_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/user_image"
+                    android:layout_width="150dp"
+                    android:layout_height="100dp"
+                    android:layout_margin="@dimen/small_margin"
+                    android:src="@drawable/logo" />
+
+                <TextView
+                    android:id="@+id/username"
+                    style="@style/Text_black"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="@dimen/medium_margin"
+                    tools:text="Brandi" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginLeft="@dimen/medium_margin"
+                android:orientation="vertical">
+
+                <TextView
+                    style="@style/Text_black"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="What you'll give today:" />
+
+                <TextView
+                    android:id="@+id/borrow_amount"
+                    style="@style/Bold_2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="$100" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <View
+            android:id="@+id/divider"
+            android:layout_width="match_parent"
+            android:layout_height="3dp"
+            android:layout_below="@+id/borrow_details_container"
+            android:background="?android:attr/listDivider" />
+
+        <LinearLayout
+            android:id="@+id/repay_amount_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/divider"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/borrow_repay_date"
+                style="@style/Text_black"
+                android:layout_marginTop="@dimen/medium_margin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="What you'll get 12/20/2018:" />
+
+            <TextView
+                android:id="@+id/repay_amount"
+                style="@style/Bold_2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/small_margin"
+                tools:text="$100" />
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/repay_amount_container">
+
+            <TextView
+                android:id="@+id/interest"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/seekbar"
+                android:text="1.00%" />
+
+            <android.support.v7.widget.AppCompatSeekBar
+                android:id="@+id/seekbar"
+                android:layout_width="match_parent"
+                android:layout_height="8dp"
+                android:layout_below="@+id/interest"
+                android:layout_margin="@dimen/small_margin"
+                android:minHeight="5dp"
+                android:progressDrawable="@drawable/seekbar_drawable"
+                android:thumb="@drawable/ic_seekbar_thumb" />
+
+            <EditText
+                android:id="@+id/add_comment"
+                android:layout_below="@+id/seekbar"
+                android:layout_marginTop="@dimen/medium_margin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Add a Comment for the borrower"/>
+            <Button
+                android:id="@+id/submit"
+                android:layout_below="@+id/add_comment"
+                android:layout_centerInParent="true"
+                android:layout_marginTop="@dimen/medium_margin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Submit"/>
+
+        </RelativeLayout>
+    </RelativeLayout>
+</android.support.constraint.ConstraintLayout>

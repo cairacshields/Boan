@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:cardView="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="center"
+    android:layout_marginLeft="20dp"
+    android:layout_marginTop="40dp"
+    android:layout_marginRight="20dp"
+    android:layout_marginBottom="48dp">
+
+    <FrameLayout
+        android:id="@+id/background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginBottom="6dp"
+            android:background="@drawable/shape2"
+            android:gravity="center_horizontal"
+            android:orientation="vertical" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginBottom="12dp"
+            android:background="@drawable/shape1"
+            android:gravity="center_horizontal"
+            android:orientation="vertical" />
+
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="18dp"
+        android:background="@drawable/shape"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+
+        <android.support.v7.widget.CardView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            cardView:cardCornerRadius="10dp"
+            cardView:cardElevation="4dp"
+            cardView:contentPadding="@dimen/base_padding">
+
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/borrow_amount"
+                    style="@style/Bold_1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical|center_horizontal"
+                    android:layout_marginTop="@dimen/medium_margin"
+                    android:elevation="8dp"
+                    tools:text="$60" />
+
+                <ImageView
+                    android:id="@+id/amount_background"
+                    android:layout_width="300dp"
+                    android:layout_height="200dp"
+                    android:background="@color/colorPrimaryDark"
+                    android:padding="4dp" />
+            </FrameLayout>
+        </android.support.v7.widget.CardView>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="top|center_horizontal"
+            android:orientation="horizontal">
+
+            <RelativeLayout
+                android:id="@+id/user_info_container"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/username"
+                    style="@style/Text_black_medium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:layout_alignParentLeft="true"
+                    android:padding="4dp"
+                    tools:text="Kelly Anne" />
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:layout_gravity="right"
+                    android:layout_alignParentRight="true"
+                    tools:src="@drawable/ic_user"
+                    android:id="@+id/profile_pic"
+                    android:layout_width="75dp"
+                    android:layout_margin="@dimen/base_padding"
+                    android:layout_height="75dp"
+                    android:padding="4dp" />
+             </RelativeLayout>
+
+            <View
+                android:id="@+id/divider"
+                android:layout_below="@+id/user_info_container"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="@color/browser_actions_divider_color"/>
+
+                    <TextView
+                        android:layout_below="@+id/divider"
+                        style="@style/Text_grey"
+                        android:id="@+id/borrow_reason_header"
+                        android:layout_marginTop="@dimen/base_padding"
+                        android:text="Borrow Reason"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        />
+                    <TextView
+                        android:id="@+id/borrow_reason"
+                        style="@style/Text_black"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="left"
+                        android:padding="4dp"
+                        android:layout_marginTop="@dimen/small_margin"
+                        android:layout_below="@+id/borrow_reason_header"
+                        tools:text="@string/placeholder_lorem_small"
+                        tools:visibility="visible" />
+
+                    <TextView
+                        android:id="@+id/borrow_repay_date"
+                        android:layout_below="@+id/borrow_reason"
+                        style="@style/Text_black_medium"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginTop="@dimen/huge_margin"
+                        android:gravity="center_horizontal"
+                        android:padding="4dp"
+                        tools:text="12/30/2018"
+                        tools:visibility="visible" />
+
+     </RelativeLayout>
+
+    </LinearLayout>
+
+    <View
+        android:id="@+id/item_swipe_left_indicator"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:alpha="0"
+        android:background="@drawable/like" />
+
+    <View
+        android:id="@+id/item_swipe_right_indicator"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_gravity="right"
+        android:alpha="0"
+        android:background="@drawable/nope" />
+</FrameLayout>

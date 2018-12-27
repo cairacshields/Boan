@@ -1,80 +1,93 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:orientation="vertical"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/main_gradient_background"
+    android:orientation="vertical">
 
     <TextView
-        android:layout_marginTop="@dimen/medium_margin"
-        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/huge_margin"
         android:layout_width="wrap_content"
-        android:textSize="30sp"
         android:layout_height="wrap_content"
-        android:text="@string/which_are_you"/>
+        android:layout_gravity="center_horizontal"
+        android:textColor="@color/white"
+        android:text="@string/which_are_you"
+        android:textSize="30sp" />
+
     <RelativeLayout
-        android:gravity="center_horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-    <LinearLayout
-        android:layout_margin="@dimen/medium_margin"
-        android:layout_toEndOf="@+id/borrow"
-        android:id="@+id/lend"
-        android:layout_width="wrap_content"
-        android:orientation="vertical"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal">
 
-        <ImageView
-            android:tint="@color/colorPrimary"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            android:src="@drawable/ic_icons8_donation_64"/>
-        <TextView
-            android:layout_gravity="center_horizontal"
+        <LinearLayout
+            android:id="@+id/lend"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/lender"/>
-    </LinearLayout>
+            android:layout_margin="@dimen/medium_margin"
+            android:layout_toEndOf="@+id/borrow"
+            android:orientation="vertical">
 
-    <LinearLayout
-        android:layout_margin="@dimen/medium_margin"
+            <ImageView
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_gravity="center_horizontal"
+                android:src="@drawable/ic_icons8_donation_64"
+                android:tint="@color/white" />
 
-        android:id="@+id/borrow"
-        android:layout_width="wrap_content"
-        android:orientation="vertical"
-        android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                style="@style/Text_white"
+                android:text="@string/lender" />
+        </LinearLayout>
 
-        <ImageView
-            android:tint="@color/colorPrimary"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            android:src="@drawable/ic_icons8_receive_cash_64"/>
-        <TextView
-            android:layout_gravity="center_horizontal"
+        <LinearLayout
+            android:id="@+id/borrow"
+
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/borrower"/>
-    </LinearLayout>
+            android:layout_margin="@dimen/medium_margin"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:src="@drawable/ic_icons8_receive_cash_64"
+                android:tint="@color/white" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                style="@style/Text_white"
+                android:text="@string/borrower" />
+        </LinearLayout>
     </RelativeLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:padding="@dimen/base_padding"
         android:layout_marginTop="@dimen/huge_margin"
-        android:orientation="vertical">
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:padding="@dimen/base_padding">
+
         <com.stripe.android.view.CardInputWidget
-            android:layout_gravity="center_horizontal"
             android:id="@+id/card_input_widget"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            />
+            android:layout_gravity="center_vertical" />
+
 
         <Button
             android:id="@+id/complete_card_info"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="DONE"/>
+            android:background="@drawable/round_corners_button"
+            android:layout_marginTop="@dimen/medium_margin"
+            android:layout_gravity="center"
+            android:text="Done"
+            android:textColor="@color/colorPrimaryDark"/>
     </LinearLayout>
 </LinearLayout>

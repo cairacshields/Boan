@@ -16,4 +16,24 @@
     <string name="collateral_offer">Wanna offer collateral? Upload a picture of it.</string>
     <string name="post_request_title">Post your Borrow request</string>
     <string name="submit">Submit</string>
+
+    <string name="placeholder_lorem_small">Lorem ipsum dolor sit amet consectetur adipiscing elit nascetur taciti hac senectus, gravida aptent iaculis eu netus blandit mollis venenatis consequat. </string>
+    <string name="placeholder_lorem_medium">Lorem ipsum dolor sit amet consectetur adipiscing elit nascetur taciti hac senectus, gravida aptent iaculis eu netus blandit mollis venenatis consequat. Nisl augue tempus vivamus enim ornare lacinia nascetur euismod ligula, ac porta turpis congue ad vulputate justo natoque diam quam, ante tortor ultrices porttitor etiam scelerisque dictum viverra. Neque at taciti potenti ad ridiculus mollis fermentum montes curabitur himenaeos vehicula nisi placerat volutpat proin, odio etiam consequat tincidunt vel donec metus accumsan aliquam lectus sodales mattis dis ac.</string>
+    <string name="empty_borrow_requests">No more Borrow Requests.</string>
+    <string name="my_account">My Account</string>
+    <string name="borrow_requests">Borrow Requests</string>
+    <string name="settings">Settings</string>
+
+    <!-- NOTIFICATION CHANNEL STRINGS -->
+    <string name="channel_name">Boan Channel</string>
+    <string name="channel_description">Receive notifications from Boan</string>
+    <string name="login">LOGIN</string>
+    <string name="forgot_password">Forgot Password?</string>
+    <string name="existing_account">Already have an account?</string>
+    <string name="reset_email">Send reset email</string>
+    <string name="continue_1">Continue</string>
+
+    <string name="terms_agreement_message">Borrower %1$s, agrees to the terms mentioned in the terms agreement, declared by lender %2$s. To repay the amount of %3$s, on the date of %4$s.
+                                           If borrower fails to repay the written amount on the date mentioned in the terms agreement after 3 charge attempts, a legal claim can be filed against
+                                           the borrower and all accounts suspended. </string>
 </resources>

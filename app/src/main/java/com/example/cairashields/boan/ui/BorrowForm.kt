@@ -9,16 +9,25 @@ import java.util.*
 import android.app.DatePickerDialog
 import java.text.SimpleDateFormat
 import android.app.Dialog
+import android.app.PendingIntent.getActivity
 import android.widget.*
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import android.content.Intent
+import android.database.Cursor
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
+import android.os.Build
 import android.provider.MediaStore
 import android.util.Log
 import com.example.cairashields.boan.Objects.BorrowRequest
 import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 import com.squareup.picasso.Picasso
+import java.util.UUID.randomUUID
 
 
 class BorrowForm : Activity(), NumberPicker.OnValueChangeListener {
@@ -40,8 +49,13 @@ class BorrowForm : Activity(), NumberPicker.OnValueChangeListener {
 
     var myCalendar = Calendar.getInstance()
     var mDatabaseReference: DatabaseReference? = null
+    var mStorage:  FirebaseStorage? = null
+    var mStorageRef : StorageReference? = null
+
     private lateinit var auth: FirebaseAuth
     var imageUrl: String? = null
+    var requestedAmount: Int? = null
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,6 +65,7 @@ class BorrowForm : Activity(), NumberPicker.OnValueChangeListener {
 
         val database = FirebaseDatabase.getInstance()
         mDatabaseReference = database.reference
+        mStorage = FirebaseStorage.getInstance()
         // Initialize Firebase Auth
         auth = FirebaseAuth.getInstance()
 
@@ -108,11 +123,51 @@ class BorrowForm : Activity(), NumberPicker.OnValueChangeListener {
                 //Display an error
                 return
             }else {
-                //val inputStream = this@BorrowForm.getContentResolver().openInputStream(data.data)
-                imageUrl = data.data.toString()
-                Picasso.get().load(data.data).into(mCollateralImage)
+
+                var selectedImageUri = data.getData();
+                var url = data.getData().toString();
+                if (url.startsWith("content://com.google.android.apps.photos.content") || url.startsWith("content://com.android.providers.media.documents") ) {
+
+                        var inputStream = this.getContentResolver().openInputStream(selectedImageUri)
+
+                        imageUrl = randomUUID().toString()
+
+                        mStorageRef = mStorage!!.reference.child(imageUrl!!)
+                        val uploadTask = mStorageRef!!.putStream(inputStream)
+
+                        uploadTask.addOnFailureListener {
+                            it.printStackTrace()
+                            // Handle unsuccessful uploads
+                        }.addOnSuccessListener {
+                            Log.v("IMAGE UPLOADED!", "Success")
+                            // taskSnapshot.metadata contains file metadata such as size, content-type, etc.
+                            // ...
+                        }
+                        Picasso.get().load(selectedImageUri).into(mCollateralImage)
+
+                }else {
+                   //  startCrop(tempPath);
+
+             }
+
             }
         }
+    }
+
+    fun getPath(uri: Uri, activity: Activity): String {
+        var cursor: Cursor? = null
+        try {
+            val projection = arrayOf(MediaStore.MediaColumns.DATA)
+            cursor = activity.contentResolver.query(uri, projection, null, null, null)
+            if (cursor!!.moveToFirst()) {
+                val column_index = cursor!!.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA)
+                return cursor!!.getString(column_index)
+            }
+        } catch (e: Exception) {
+        } finally {
+            cursor!!.close()
+        }
+        return ""
     }
 
 
@@ -128,7 +183,7 @@ class BorrowForm : Activity(), NumberPicker.OnValueChangeListener {
         var init = 10
         val stringValues: MutableList<String> = arrayListOf()
         while(init <= 300){
-            stringValues.add("$$init")
+            stringValues.add("$init")
             init += 10
         }
 
@@ -139,7 +194,8 @@ class BorrowForm : Activity(), NumberPicker.OnValueChangeListener {
         np.setOnValueChangedListener(this)
 
         b1.setOnClickListener{
-            mAmount.text = stringValues[np.value];
+            mAmount.text = "$" +stringValues[np.value];
+            requestedAmount = stringValues[np.value].toInt()
             d.dismiss();
         }
         b2.setOnClickListener{
@@ -157,30 +213,34 @@ class BorrowForm : Activity(), NumberPicker.OnValueChangeListener {
     }
 
     fun submitRequest(){
-        var username = auth.currentUser!!.displayName
-        var email = auth.currentUser!!.email
-        var collateralPic = imageUrl
-        var collateralDescription = mCollateralDesctiption.text.toString()
-        var borrowAmount = mAmount.text.toString()
-        var borrowReason = mBorrowReason.text.toString()
+        val userId = auth.currentUser!!.uid
+        val username = auth.currentUser!!.displayName
+        val email = auth.currentUser!!.email
+        val collateralPic = imageUrl
+        val collateralDescription = mCollateralDesctiption.text.toString()
+        val borrowAmount = requestedAmount
+        val borrowReason = mBorrowReason.text.toString()
 
         val format = "MM/dd/yy" //In which you need put here
         val sdf = SimpleDateFormat(format, Locale.US)
         val date:Date = sdf.parse(mPayDate.text.toString())
-        var repayDate: Date = date
+        val repayDate: Date = date
 
         mDatabaseReference!!.child(BORROW_REQUEST).push().setValue(BorrowRequest(
-                username,email,collateralPic,collateralDescription,borrowAmount,repayDate,borrowReason)).addOnCompleteListener { it ->
+                userId, username, email, collateralPic, collateralDescription, borrowAmount!!, repayDate, borrowReason, false)
+        ).addOnCompleteListener { it ->
 
-            if(it.isSuccessful){
-                Toast.makeText(this@BorrowForm, "Borrow Request published!", Toast.LENGTH_LONG).show()
-                Log.v("Borrow Request status: ", "Success")
-                //Take to main profile?
+            when {
+                it.isSuccessful -> {
+                    Toast.makeText(this@BorrowForm, "Borrow Request published!", Toast.LENGTH_LONG).show()
+                    Log.v("Borrow Request status: ", "Success")
+                    //Take to main profile?
+                    val intent = Intent(this@BorrowForm, SwipeBorrowRequests::class.java)
+                    startActivity(intent)
 
-            }else if(it.isCanceled){
-                Log.v("Borrow Request status: ","Cancled")
-            }else{
-                Log.v("Borrow Request status: ", "Something went wrong")
+                }
+                it.isCanceled -> Log.v("Borrow Request status: ","Cancled")
+                else -> Log.v("Borrow Request status: ", "Something went wrong")
             }
         }
     }

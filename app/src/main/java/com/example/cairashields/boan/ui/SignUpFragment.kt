@@ -8,33 +8,42 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
-import android.widget.Toast
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
+import android.widget.*
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.example.cairashields.boan.MainActivity
 import com.example.cairashields.boan.R
+import com.example.cairashields.boan.Services.FirebaseInstanceIdService
+import com.example.cairashields.boan.events.Events
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.IdpResponse
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 import com.wajahatkarim3.easyvalidation.core.view_ktx.textEqualTo
 import com.wajahatkarim3.easyvalidation.core.view_ktx.validEmail
 import com.wajahatkarim3.easyvalidation.core.view_ktx.validator
+import org.greenrobot.eventbus.EventBus
 import org.jetbrains.annotations.Nullable
 
 class SignUpFragment: Fragment(){
-    @Nullable @BindView(R.id.sign_in) lateinit var mSignIn: Button
-    @Nullable @BindView(R.id.sign_up) lateinit var mSignUp: Button
+    @Nullable @BindView(R.id.sign_in)lateinit var mSignUp: Button
     @Nullable @BindView(R.id.email) lateinit var mEmail: EditText
     @Nullable @BindView(R.id.password) lateinit var mPassword: EditText
     @Nullable @BindView(R.id.password_verify) lateinit var mPasswordVerify: EditText
     @Nullable @BindView(R.id.user_name) lateinit var mUserName: EditText
+    @Nullable @BindView(R.id.already_have_account)lateinit var mExistingAccount: TextView
+    @Nullable @BindView(R.id.arrow)lateinit var mArrow: ImageView
 
     val RC_SIGN_IN = 100
-    val TAG = "SIGN IN/ SIGN UP"
+    val TAG = "SIGN UP"
     private lateinit var auth: FirebaseAuth
+    var mDatabaseReference: DatabaseReference? = null
+    var animation : Animation? = null
+
 
     val providers = arrayListOf(AuthUI.IdpConfig.EmailBuilder().build())
 
@@ -47,15 +56,27 @@ class SignUpFragment: Fragment(){
 
         ButterKnife.bind(this, root)
 
-        mSignIn = root.findViewById(R.id.sign_in)
-        mSignUp = root.findViewById(R.id.sign_up)
+        mSignUp = root.findViewById(R.id.sign_in)
         mEmail = root.findViewById(R.id.email)
         mUserName = root.findViewById(R.id.user_name)
         mPassword = root.findViewById(R.id.password)
         mPasswordVerify = root.findViewById(R.id.password_verify)
+        mExistingAccount = root.findViewById(R.id.already_have_account)
+        mArrow = root.findViewById(R.id.arrow)
 
+        animation = AnimationUtils.loadAnimation(context, R.anim.arrow_swipe)
+        mArrow.animation = animation
+        mArrow.animate()
         // Initialize Firebase Auth
         auth = FirebaseAuth.getInstance()
+        val database = FirebaseDatabase.getInstance()
+        mDatabaseReference = database.reference.child("users").child("firebaseToken")
+
+        mExistingAccount.setOnClickListener {
+            val intent = Intent(context, SignInFragment::class.java)
+            startActivity(intent)
+        }
+
 
         return root
     }
@@ -73,48 +94,6 @@ class SignUpFragment: Fragment(){
         var email:String?
         var password: String?
         var passwordVerify: String?
-        mSignIn.setOnClickListener {
-            email = mEmail.text.toString()
-            password = mPassword.text.toString()
-            passwordVerify = mPasswordVerify.text.toString()
-
-            val passwordsEqual = password!!.textEqualTo(passwordVerify!!)
-
-            val emailValid = email!!.validEmail() {
-                // This method will be called when myEmailStr is not a valid email.
-                Toast.makeText(activity, it, Toast.LENGTH_SHORT).show()
-            }
-            val passwordValid = password!!.validator()
-                    .nonEmpty()
-                    .atleastOneNumber()
-                    .atleastOneSpecialCharacters()
-                    .atleastOneUpperCase()
-                    .addErrorCallback {
-                        mPassword.error = it
-                        // it will contain the right message.
-                        // For example, if edit text is empty,
-                        // then 'it' will show "Can't be Empty" message
-                        Toast.makeText(activity, it, Toast.LENGTH_SHORT).show()
-                    }
-                    .check()
-            if(emailValid && passwordValid && passwordsEqual) {
-                auth.signInWithEmailAndPassword(email!!, password!!)
-                        .addOnCompleteListener(activity!! as MainActivity) { task ->
-                            if (task.isSuccessful) {
-                                // Sign in success, update UI with the signed-in user's information
-                                Log.d(TAG, "signInWithEmail:success")
-                                val user = auth.currentUser
-                            } else {
-                                // If sign in fails, display a message to the user.
-                                Log.w(TAG, "signInWithEmail:failure", task.exception)
-                                Toast.makeText(activity, "Authentication failed.",
-                                        Toast.LENGTH_SHORT).show()
-                            }
-
-                            // ...
-                        }
-            }else Log.e(TAG, "Password valid? $password and email valid? $emailValid")
-        }
 
         mSignUp.setOnClickListener {
             email = mEmail.text.toString()
@@ -159,6 +138,7 @@ class SignUpFragment: Fragment(){
                                                 Log.d(TAG, "User profile updated.")
 
                                                 //Redirect to the main app...
+                                                EventBus.getDefault().post(Events.UpdateViewPager())
                                             }
                                         }
 
