@@ -14,6 +14,7 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import com.example.cairashields.boan.R
 import com.example.cairashields.boan.Services.FirebaseInstanceIdService
+import com.example.cairashields.boan.events.Events
 import com.firebase.ui.auth.IdpResponse
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
@@ -21,10 +22,8 @@ import com.google.firebase.database.FirebaseDatabase
 import com.wajahatkarim3.easyvalidation.core.view_ktx.validEmail
 import com.wajahatkarim3.easyvalidation.core.view_ktx.validator
 import org.jetbrains.annotations.Nullable
-import org.junit.experimental.results.ResultMatchers.isSuccessful
-import com.google.android.gms.tasks.Task
-import com.google.android.gms.tasks.OnCompleteListener
 
+import org.greenrobot.eventbus.EventBus
 
 
 class SignInFragment: AppCompatActivity() {
@@ -83,6 +82,7 @@ class SignInFragment: AppCompatActivity() {
                         mSignInForgotEmpty.visibility = View.GONE
                     }
         }
+
     }
 
     override fun onStart() {
@@ -127,7 +127,11 @@ class SignInFragment: AppCompatActivity() {
                                 val user = auth.currentUser
 
                                 //update the firebaseToken on each signIn
-                                mDatabaseReference!!.setValue(FirebaseInstanceIdService.getRefreshedToken())
+                                mDatabaseReference!!.child(user!!.uid).child("firebaseToken").setValue(FirebaseInstanceIdService.getRefreshedToken())
+
+                                //TODO check if user is lender or borrower and send them to the right activity
+                                val intent = Intent(this@SignInFragment, SwipeBorrowRequests::class.java)
+                                startActivity(intent)
 
                             } else {
                                 // If sign in fails, display a message to the user.

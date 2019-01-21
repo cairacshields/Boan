@@ -26,12 +26,16 @@ import com.google.android.gms.tasks.Task
 import android.support.annotation.NonNull
 import android.support.v4.view.ViewPager
 import android.util.Log
+import com.example.cairashields.boan.Objects.Users
 import com.example.cairashields.boan.adapters.FragmentViewPagerAdapter
 import com.example.cairashields.boan.events.Events
 import com.example.cairashields.boan.ui.BorrowForm
+import com.example.cairashields.boan.ui.CreditCardFragment
+import com.example.cairashields.boan.ui.SignUpFragment
 import com.example.cairashields.boan.ui.SwipeBorrowRequests
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.UserProfileChangeRequest
+import com.google.firebase.database.*
 import com.wajahatkarim3.easyvalidation.core.view_ktx.textEqualTo
 import com.wajahatkarim3.easyvalidation.core.view_ktx.validEmail
 import com.wajahatkarim3.easyvalidation.core.view_ktx.validator
@@ -42,27 +46,56 @@ import org.greenrobot.eventbus.ThreadMode
 
 class MainActivity : AppCompatActivity() {
 
-    private var mPager: ViewPager? = null
-
     private lateinit var auth: FirebaseAuth
+    var mDatabaseReferenceUsers: DatabaseReference? = null
+    var database: FirebaseDatabase? = null
     private val CHANNEL_ID = "BOAN_CHANNEL"
+    private var user: Users? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         ButterKnife.bind(this)
-        mPager = findViewById(R.id.pager)
 
         //Need to create notification channel for devices running API 8.0+
         createNotificationChannel()
 
-        // Initialize Firebase Auth
+        // Initialize Firebase Auth and database
         auth = FirebaseAuth.getInstance()
+        database = FirebaseDatabase.getInstance()
+        mDatabaseReferenceUsers = database!!.reference.child("users")
+
+
         if(auth.currentUser != null){
-           val intent = Intent(this@MainActivity, SwipeBorrowRequests::class.java)
+            var mIsLender: Boolean? = null
+            mDatabaseReferenceUsers!!.child(auth.currentUser!!.uid).addValueEventListener(object: ValueEventListener{
+                override fun onCancelled(p0: DatabaseError) {
+
+                }
+
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    user =  snapshot.getValue(Users::class.java)
+                    user?.let {user ->
+                        mIsLender = user.isLender
+                        if (mIsLender!!) {
+                            //They're a lender....show the borrowRequest page
+                            val intent = Intent(this@MainActivity, SwipeBorrowRequests::class.java)
+                            startActivity(intent)
+                        } else {
+                            //They're a borrower... show the borrow form
+                            val intent = Intent(this@MainActivity, BorrowForm::class.java)
+                            startActivity(intent)
+                        }
+                    }
+                }
+
+            })
+        }else{
+            //They aren't logged in, or they are a new user... show the sign up page
+            val intent = Intent(this, SignUpFragment::class.java)
             startActivity(intent)
         }
-        mPager!!.adapter = FragmentViewPagerAdapter(supportFragmentManager)
+
     }
 
     override fun onStart() {
@@ -95,7 +128,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun updatePager(){
-        mPager!!.setCurrentItem(1)
+        val intent = Intent(this, CreditCardFragment::class.java)
+        startActivity(intent)
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

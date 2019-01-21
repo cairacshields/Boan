@@ -81,13 +81,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="@dimen/small_margin"
-            style="@style/Text_black"
+            style="@style/Text_white"
             android:text="@string/existing_account"/>
-        <ImageView
-            android:id="@+id/arrow"
-            android:layout_marginTop="@dimen/medium_margin"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_double_arrow"/>
     </LinearLayout>
 </LinearLayout>

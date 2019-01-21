@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:id="@+id/borrow_step_1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="60dp"
+        >
+
+        <TextView
+            android:id="@+id/header"
+            style="@style/Text_black_bold"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/base_padding"
+            android:gravity="center_horizontal"
+            android:text="Let’s tell the lender’s what you need!" />
+
+        <LinearLayout
+            android:gravity="center_horizontal"
+            android:layout_centerHorizontal="true"
+            android:id="@+id/step_1_text_container"
+            android:layout_below="@+id/header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/step_1_text"
+            style="@style/Bold_4_black"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/base_padding"
+            android:gravity="center_horizontal"
+            android:text="Step 1." />
+            <ImageButton
+                android:background="?selectableItemBackground"
+                android:id="@+id/next_step_1"
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_double_arrow_orange"
+                />
+        </LinearLayout>
+        <Button
+            android:id="@+id/borrow_amount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/step_1_text_container"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/medium_margin"
+            android:background="@drawable/round_corners_button"
+            android:backgroundTint="@color/colorPrimaryDark"
+            android:padding="@dimen/base_padding"
+            android:text="How Much?"
+            android:textColor="@color/white" />
+
+        <TextView
+            android:id="@+id/amount"
+            style="@style/Text_black_bold"
+            android:layout_below="@+id/borrow_amount"
+            android:layout_margin="@dimen/base_padding"
+            android:gravity="center_horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:text="$20"/>
+        <android.support.v7.widget.AppCompatImageView
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:layout_alignParentBottom="true"
+            app:srcCompat="@drawable/ic_bermuda_message_sent" />
+    </RelativeLayout>
+</android.support.constraint.ConstraintLayout>

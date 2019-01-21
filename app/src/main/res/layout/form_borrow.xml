@@ -1,113 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorPrimary">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/white"
+    >
 
-    <android.support.v7.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/small_margin"
-        android:elevation="3dp">
-        <android.support.v4.widget.NestedScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+       <include layout="@layout/borrow_step_1"
+            tools:visibility="gone"/>
+        <include layout="@layout/borrow_step_2"
+            tools:visibility="gone"/>
+        <include layout="@layout/borrow_step_3"
+            tools:visibility="gone"/>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/small_margin"
-            android:orientation="vertical">
+
+
+         <LinearLayout
+                android:gravity="center_vertical"
+                android:orientation="vertical"
+                android:id="@+id/borrow_empty_state"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="60dp"
+                >
+
+            <android.support.v7.widget.AppCompatImageView
+                android:layout_width="200dp"
+                android:layout_height="125dp"
+                app:srcCompat="@drawable/ic_paper_plane"
+                android:layout_gravity="center_horizontal"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/post_request_title"
-                android:textColor="@color/black"
-                android:layout_gravity="center_horizontal"/>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                style="@style/Text_black_bold"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="@dimen/huge_margin"
-                android:orientation="vertical"
-                android:padding="@dimen/small_margin">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/small_margin"
-                    android:padding="@dimen/small_margin"
-                    android:text="@string/collateral_offer" />
-
-                <ImageView
-                    android:id="@+id/user_collateral_pic"
-                    android:layout_width="75dp"
-                    android:layout_height="50dp"
-                    android:layout_gravity="center"
-                    android:src="@drawable/ic_add_image" />
-
-                <EditText
-                    android:id="@+id/collateral_description"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/small_margin"
-                    android:hint="@string/collater_describe"
-                    android:padding="@dimen/small_margin" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="@dimen/huge_margin"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/borrow_amount" />
-
-                <TextView
-                    android:id="@+id/amount"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:text="$0" />
-
-                <Button
-                    android:id="@+id/borrow_amount"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:text="Chose amount" />
-            </LinearLayout>
-
-            <EditText
-                android:id="@+id/borrow_reason"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:maxLength="160"
-                android:layout_marginTop="@dimen/medium_margin"
-                android:hint="@string/reason_message" />
-
-            <EditText
-                android:id="@+id/borrow_repay_date"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/medium_margin"
-                android:focusable="false"
-                android:hint="@string/payday" />
-
-            <Button
-                android:id="@+id/submit_request"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/submit" />
+                android:gravity="center_horizontal"
+                android:padding="@dimen/base_padding"
+                android:layout_margin="@dimen/base_padding"
+                android:text="Look’s like you’ve already got an active Borrow Request out there….. you’ll be notified when you get a Terms Agreement!"/>
         </LinearLayout>
-        </android.support.v4.widget.NestedScrollView>
-    </android.support.v7.widget.CardView>
 
-</RelativeLayout>
+        <com.aurelhubert.ahbottomnavigation.AHBottomNavigation
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:id="@+id/bottom_nav"
+            layout="@layout/item_bottom_menu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom" />
+</android.support.constraint.ConstraintLayout>

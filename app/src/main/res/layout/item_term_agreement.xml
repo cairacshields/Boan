@@ -79,14 +79,16 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-
                 <Button
                     android:id="@+id/decline"
                     style="@style/Text_black_bold"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:background="@drawable/round_corners_button"
+                    android:layout_margin="@dimen/medium_margin"
+                    android:layout_gravity="center"
                     android:layout_alignParentLeft="true"
-                    android:layout_margin="@dimen/base_padding"
+                    android:textColor="@color/colorPrimaryDark"
                     android:text="Decline" />
 
                 <Button
@@ -94,8 +96,11 @@
                     style="@style/Text_black_bold"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:background="@drawable/round_corners_button"
+                    android:layout_margin="@dimen/medium_margin"
                     android:layout_alignParentRight="true"
-                    android:layout_margin="@dimen/base_padding"
+                    android:layout_gravity="center"
+                    android:textColor="@color/colorPrimaryDark"
                     android:text="Accept" />
             </RelativeLayout>
 

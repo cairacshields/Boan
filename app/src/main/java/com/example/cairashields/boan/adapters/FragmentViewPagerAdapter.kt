@@ -16,8 +16,8 @@ class FragmentViewPagerAdapter : FragmentPagerAdapter {
     override fun getItem(position: Int): Fragment {
         var fragment: Fragment? = null
         when(position){
-            0 -> fragment = SignUpFragment().newInstance()
-            1 -> fragment = CreditCardFragment().newInstance()
+//            0 -> fragment = SignUpFragment().newInstance()
+//            1 -> fragment = CreditCardFragment().newInstance()
         }
         return fragment!!
     }

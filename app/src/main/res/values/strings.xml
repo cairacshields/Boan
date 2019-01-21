@@ -22,6 +22,7 @@
     <string name="empty_borrow_requests">No more Borrow Requests.</string>
     <string name="my_account">My Account</string>
     <string name="borrow_requests">Borrow Requests</string>
+    <string name="borrow_form">Borrow Form</string>
     <string name="settings">Settings</string>
 
     <!-- NOTIFICATION CHANNEL STRINGS -->
@@ -36,4 +37,6 @@
     <string name="terms_agreement_message">Borrower %1$s, agrees to the terms mentioned in the terms agreement, declared by lender %2$s. To repay the amount of %3$s, on the date of %4$s.
                                            If borrower fails to repay the written amount on the date mentioned in the terms agreement after 3 charge attempts, a legal claim can be filed against
                                            the borrower and all accounts suspended. </string>
+
+    <string name="stripe_connect_url">https://connect.stripe.com/express/oauth/authorize?redirect_uri=http://www.example.com/boanConnectExpress&amp;client_id=ca_EGRwxHuLoiq4kCLr6EPHM9xV9lUEdD82&amp;state=%1$n&amp;stripe_user[email]=%2$s</string>
 </resources>

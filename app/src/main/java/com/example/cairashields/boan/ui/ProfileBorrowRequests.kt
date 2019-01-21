@@ -19,10 +19,7 @@ import android.content.DialogInterface
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
-import android.widget.Button
-import android.widget.LinearLayout
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import butterknife.OnClick
 import com.example.cairashields.boan.Messaging.NotificationManager
 import com.example.cairashields.boan.Objects.Users
@@ -41,6 +38,7 @@ import java.util.*
 class ProfileBorrowRequests: AppCompatActivity() {
 
     @BindView(R.id.content)lateinit var mContent: RecyclerView
+    @BindView(R.id.empty_terms_agreement_page) lateinit var mEmptyContent: RelativeLayout
 
     var mDatabaseReference: DatabaseReference? = null
     var mDatabaseReferenceUsers: DatabaseReference? = null
@@ -59,6 +57,7 @@ class ProfileBorrowRequests: AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
 
         mContent = findViewById(R.id.content)
+        mEmptyContent = findViewById(R.id.empty_terms_agreement_page)
 
         val title = intent.extras.getString(EXTRA_TITLE)
         val icon = intent.extras.getString(EXTRA_ICON)
@@ -68,21 +67,32 @@ class ProfileBorrowRequests: AppCompatActivity() {
         mDatabaseReference!!.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
 
-                for (dataSnapshot in snapshot.children) {
+                if(!snapshot.hasChildren()){
+                    //Nothing to show in the recycler
+                    //Show empty page
+                    mContent.visibility = View.GONE
+                    mEmptyContent.visibility = View.VISIBLE
 
-                    val termsAgreement = dataSnapshot.getValue<TermAgreement>(TermAgreement::class.java)
 
-                    // If the terms agreement is directed to the currently signed in user.. add it to the arrayList for the recycler
-                    if(termsAgreement!!.borrowerUserId == auth.currentUser!!.uid){
-                        //Probably check the value of 'accepted' in a termsAgreement....
-                        //If it's already been accepted, we shouldn't show it... or maybe show it somewhere else?
-                        mArrayList.add(termsAgreement)
+                }else{
+                    mContent.visibility = View.VISIBLE
+                    mEmptyContent.visibility = View.GONE
+                    for (dataSnapshot in snapshot.children) {
+
+                        val termsAgreement = dataSnapshot.getValue<TermAgreement>(TermAgreement::class.java)
+
+                        // If the terms agreement is directed to the currently signed in user.. add it to the arrayList for the recycler
+                        if(termsAgreement!!.borrowerUserId == auth.currentUser!!.uid){
+                            //Probably check the value of 'accepted' in a termsAgreement....
+                            //If it's already been accepted, we shouldn't show it... or maybe show it somewhere else?
+                            mArrayList.add(termsAgreement)
+                        }
                     }
+                    mContent.setHasFixedSize(false)
+                    mAdapter = TermsRecyclerAdapter(mArrayList)
+                    mContent.adapter = mAdapter
+                    mContent.layoutManager = LinearLayoutManager(this@ProfileBorrowRequests)
                 }
-                mContent.setHasFixedSize(false)
-                mAdapter = TermsRecyclerAdapter(mArrayList)
-                mContent.adapter = mAdapter
-                mContent.layoutManager = LinearLayoutManager(this@ProfileBorrowRequests)
 
             }
 
@@ -146,7 +156,7 @@ class ProfileBorrowRequests: AppCompatActivity() {
                 builder.setPositiveButton("Accept") { dialog, which ->
                     //Borrower has accepted the terms and agreements, send payment and notification
 
-                    mDatabaseReferenceUsers.child(termAgreement.lenderUserId).addValueEventListener(object: ValueEventListener{
+                    mDatabaseReferenceUsers.child(termAgreement.lenderUserId).addListenerForSingleValueEvent(object: ValueEventListener{
                         override fun onCancelled(p0: DatabaseError) {
                         }
 
@@ -169,24 +179,31 @@ class ProfileBorrowRequests: AppCompatActivity() {
                                     }
                             //charge the lender... send the borrower the money
                             lender?.let {lender ->
-                                val centAmount = termAgreement.borrowAmount * 100
-                                Charges.putCharge(lender.token, lender.email, centAmount.toFloat(), termAgreement.lenderUserId)!!
-                                        .subscribeOn(Schedulers.io())
-                                        .observeOn(AndroidSchedulers.mainThread())
-                                        .subscribe({ response ->
+                                if (lender.token != null) {
+                                    val centAmount = termAgreement.borrowAmount * 100
+                                    Charges.putCharge(lender.token, lender.email, centAmount.toFloat(), termAgreement.lenderUserId, termAgreement.borrowerUserId)!!
+                                            .subscribeOn(Schedulers.io())
+                                            .observeOn(AndroidSchedulers.mainThread())
+                                            .subscribe({ response ->
 
-                                            if (response.isSuccessful) {
-                                                Log.d("CHARGE REQUEST", response.message() + " " + response.body())
-                                                //Update the termsAgreement 'accepted' value
-                                            } else if (response.isRedirect) {
-                                                Log.d("CHARGE REQUEST", "is redirect?")
-                                            } else {
-                                                Log.d("CHARGE REQUEST", response.body().string())
-                                            }
+                                                if (response.isSuccessful) {
+                                                    Log.d("CHARGE REQUEST", response.message() + " " + response.body())
+                                                    //Update the termsAgreement 'accepted' value
+                                                    mDatabaseReferenceTerms.child(termAgreement.lenderUserId).child("accepted").setValue(true)
 
-                                        }, { e -> e.printStackTrace()}
+                                                } else if (response.isRedirect) {
+                                                    Log.d("CHARGE REQUEST", "is redirect?")
+                                                } else {
+                                                    Log.d("CHARGE REQUEST", response.body().string())
+                                                }
 
-                                )
+                                            }, { e -> e.printStackTrace() }
+
+                                            )
+                                }else{
+                                    //Show the alert dialog to add card info
+                                    Toast.makeText(holder.itemView.context, "Unable to charge the lender at this time. Please try again later.", Toast.LENGTH_LONG).show()
+                                }
                             }
 
 
@@ -256,11 +273,11 @@ class ProfileBorrowRequests: AppCompatActivity() {
         }
 
         class ViewHolder: RecyclerView.ViewHolder{
-            @BindView(R.id.repay_amount)lateinit var mRepayAmount: TextView
-            @BindView(R.id.repay_date)lateinit var mRepayDate: TextView
-            @BindView(R.id.lender_name)lateinit var mLenderName: TextView
-            @BindView(R.id.decline)lateinit var mDecline: Button
-            @BindView(R.id.accept)lateinit var mAccept: Button
+            @BindView(R.id.repay_amount) var mRepayAmount: TextView
+            @BindView(R.id.repay_date) var mRepayDate: TextView
+            @BindView(R.id.lender_name) var mLenderName: TextView
+            @BindView(R.id.decline) var mDecline: Button
+            @BindView(R.id.accept) var mAccept: Button
 
             constructor(itemView: View):super(itemView){
                 ButterKnife.bind(itemView)

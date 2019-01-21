@@ -1,5 +1,6 @@
 package com.example.cairashields.boan.ui
 
+import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Point
 import android.os.Bundle
@@ -15,8 +16,11 @@ import com.google.firebase.database.*
 import java.io.Serializable
 import java.text.DecimalFormat
 import android.opengl.ETC1.getWidth
+import android.support.v7.app.AlertDialog
 import android.util.Log
+import android.view.View
 import android.widget.*
+import butterknife.OnClick
 import com.example.cairashields.boan.Messaging.NotificationManager
 import com.example.cairashields.boan.Objects.TermAgreement
 import com.google.firebase.auth.FirebaseAuth
@@ -50,6 +54,7 @@ class TermsAgreement :AppCompatActivity(), Serializable{
     var database: FirebaseDatabase? = null
     var mBorrowingUser : Users? = null
     var newRepayAmount: Int? = null
+    var lender: Users? = null
     private lateinit var auth: FirebaseAuth
 
 
@@ -142,67 +147,98 @@ class TermsAgreement :AppCompatActivity(), Serializable{
         })
 
         mSubmitAgreement.setOnClickListener {
-            //Post the new terms agreement
-            //Send the Borrower a notification
-            //Take Lender back to borrow requests activity
-//            mDatabaseReference!!.addValueEventListener(object: ValueEventListener{
-//                override fun onCancelled(p0: DatabaseError) {
-//
-//                }
-//
-//                override fun onDataChange(snapshot: DataSnapshot) {
-//                    var alreadySentAgreement = false
-//                    var notificationResponse: com.squareup.okhttp.Response?
-//                    for (dataSnapshot in snapshot.children) {
-//                        val termsAgreement = dataSnapshot.getValue<TermAgreement>(TermAgreement::class.java)
-//                        if(termsAgreement!!.lenderUserId == auth.currentUser!!.uid && termsAgreement.borrowerUserId == mBorrowRequest!!.userId){
-//                            Toast.makeText(this@TermsAgreement, "Cannot send multiple agreements", Toast.LENGTH_LONG).show()
-//                            alreadySentAgreement = true
-//                        }
-//                    }
-//                    //Only post an agreement if one hasn't already been posted
-//                    if(alreadySentAgreement == false){
-                        val comment = if(mComment.text != null) mComment.text.toString() else ""
-                        // Note ** the id of a term agreement ftm is the (lender uid + borrower uid)
-                        mDatabaseReference!!.child(auth.currentUser!!.uid+mBorrowRequest!!.userId).setValue(TermAgreement(auth.currentUser!!.uid,mBorrowRequest!!.borrowAmount, newRepayAmount!!,  mBorrowRequest!!.repayDate,
-                                mBorrowRequest!!.userId, auth.currentUser!!.uid, auth.currentUser!!.displayName, auth.currentUser!!.email, comment, false))
-                                .addOnCompleteListener{ it ->
-                                    when {
-                                        it.isSuccessful -> {
-                                            Toast.makeText(this@TermsAgreement, "Terms Agreement published!", Toast.LENGTH_LONG).show()
-                                            Log.v("Terms Agreement status:", " Success")
-                                            //Take to main profile?
-                                            val intent = Intent(this@TermsAgreement, SwipeBorrowRequests::class.java)
-                                            startActivity(intent)
 
-                                            //Send the Borrower a notification
-                                          NotificationManager.sendNotificationToUser("Congrats!",auth.currentUser!!.displayName + " has sent you a terms agreement.",
-                                                    mBorrowingUser!!.firebaseToken)
-                                                  .subscribeOn(Schedulers.io())
-                                                  .observeOn(AndroidSchedulers.mainThread())
-                                                  .subscribe {response ->
-                                                      if(response.isSuccessful){
-                                                          Log.v("Notification Response ","Success " + response.body())
-                                                          Toast.makeText(this@TermsAgreement, "Response is SUCCESS", Toast.LENGTH_LONG).show()
-                                                      }else{
-                                                          Log.v("Notification Response ","FAILED " + response.body())
-                                                          Toast.makeText(this@TermsAgreement, "Response is Failed", Toast.LENGTH_LONG).show()
-                                                      }
-                                                  }
+            //TODO We need to make sure that the lender has a stripe token in DB... if not, we need to pop up the alert dialog so they can add a card and we can save the token to firebase
+            mDatabaseReferenceUsers!!.child(auth.currentUser!!.uid).child("token").addValueEventListener(object: ValueEventListener{
+                override fun onCancelled(p0: DatabaseError) {
+                }
 
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    //lender = dataSnapshot.getValue<Users>(Users::class.java)
+                    var token = dataSnapshot.value
+                    token?.let {lender ->
+                        if(token != null){
+                            //Post the new terms agreement
+                            //Send the Borrower a notification
+                            //Take Lender back to borrow requests activity
+                            //            mDatabaseReference!!.addValueEventListener(object: ValueEventListener{
+                            //                override fun onCancelled(p0: DatabaseError) {
+                            //
+                            //                }
+                            //
+                            //                override fun onDataChange(snapshot: DataSnapshot) {
+                            //                    var alreadySentAgreement = false
+                            //                    var notificationResponse: com.squareup.okhttp.Response?
+                            //                    for (dataSnapshot in snapshot.children) {
+                            //                        val termsAgreement = dataSnapshot.getValue<TermAgreement>(TermAgreement::class.java)
+                            //                        if(termsAgreement!!.lenderUserId == auth.currentUser!!.uid && termsAgreement.borrowerUserId == mBorrowRequest!!.userId){
+                            //                            Toast.makeText(this@TermsAgreement, "Cannot send multiple agreements", Toast.LENGTH_LONG).show()
+                            //                            alreadySentAgreement = true
+                            //                        }
+                            //                    }
+                            //                    //Only post an agreement if one hasn't already been posted
+                            //                    if(alreadySentAgreement == false){
+                            val comment = if(mComment.text != null) mComment.text.toString() else ""
+                            // Note ** the id of a term agreement ftm is the (lender uid + borrower uid)
+                            mDatabaseReference!!.child(auth.currentUser!!.uid+mBorrowRequest!!.userId).setValue(TermAgreement(auth.currentUser!!.uid,mBorrowRequest!!.borrowAmount, newRepayAmount!!,  mBorrowRequest!!.repayDate,
+                                    mBorrowRequest!!.userId, auth.currentUser!!.uid, auth.currentUser!!.displayName, auth.currentUser!!.email, comment, false, false))
+                                    .addOnCompleteListener{ it ->
+                                        when {
+                                            it.isSuccessful -> {
+                                                Toast.makeText(this@TermsAgreement, "Terms Agreement published!", Toast.LENGTH_LONG).show()
+                                                Log.v("Terms Agreement status:", " Success")
+                                                //Take to main profile?
+                                                val intent = Intent(this@TermsAgreement, SwipeBorrowRequests::class.java)
+                                                startActivity(intent)
+
+                                                //Send the Borrower a notification
+                                                NotificationManager.sendNotificationToUser("Congrats!",auth.currentUser!!.displayName + " has sent you a terms agreement.",
+                                                        mBorrowingUser!!.firebaseToken)
+                                                        .subscribeOn(Schedulers.io())
+                                                        .observeOn(AndroidSchedulers.mainThread())
+                                                        .subscribe {response ->
+                                                            if(response.isSuccessful){
+                                                                Log.v("Notification Response ","Success " + response.body())
+                                                                Toast.makeText(this@TermsAgreement, "Response is SUCCESS", Toast.LENGTH_LONG).show()
+                                                            }else{
+                                                                Log.v("Notification Response ","FAILED " + response.body())
+                                                                Toast.makeText(this@TermsAgreement, "Response is Failed", Toast.LENGTH_LONG).show()
+                                                            }
+                                                        }
+
+                                            }
+                                            it.isCanceled -> Log.v("Terms agreement status ","Cancled")
+                                            else -> Log.v("Terms agreement status ", "Something went wrong")
                                         }
-                                        it.isCanceled -> Log.v("Terms agreement status ","Cancled")
-                                        else -> Log.v("Terms agreement status ", "Something went wrong")
                                     }
-                                }
-//                    }else{
-//                        //An agreement from this lender to this borrower has already been posted
-//                        //Toast.makeText(this@TermsAgreement, "An agreement already exists", Toast.LENGTH_LONG).show()
-//                        Log.v("Terms agreement status ", "Already sent agreement")
-//                    }
-//                }
-//
-//            })
+                            //                    }else{
+                            //                        //An agreement from this lender to this borrower has already been posted
+                            //                        //Toast.makeText(this@TermsAgreement, "An agreement already exists", Toast.LENGTH_LONG).show()
+                            //                        Log.v("Terms agreement status ", "Already sent agreement")
+                            //                    }
+                            //                }
+                            //
+                            //            })
+
+                        }else{
+                            //lender need to add payment info so we can save token to DB... probably show alert dialog to make adding the card quicker
+                            Toast.makeText(this@TermsAgreement, "Please go to settings and add payment information.", Toast.LENGTH_LONG).show()
+                            val alertDialog = AlertDialog.Builder(this@TermsAgreement).create();
+                            alertDialog.setTitle("Add a Card");
+                            alertDialog.setMessage("Update in settings?");
+                            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK"
+                            ) { dialog, which ->
+                                val intent = Intent(this@TermsAgreement, SettingsPage::class.java)
+                                startActivity(intent)
+                            }
+                            alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "Maybe Later", {dialog, which -> alertDialog.dismiss()})
+                            alertDialog.show()
+                        }
+                    }
+                }
+
+            })
+
         }
 
     }

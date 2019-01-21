@@ -65,7 +65,7 @@ class SwipeBorrowRequests : AppCompatActivity(), Serializable {
 
 
     var list: ArrayList<BorrowRequest> = ArrayList<BorrowRequest>()
-
+    var isLender: Boolean? = null
     var adapter: BaseAdapter? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -77,6 +77,19 @@ class SwipeBorrowRequests : AppCompatActivity(), Serializable {
         mStorage = FirebaseStorage.getInstance()
         auth = FirebaseAuth.getInstance()
 
+        //We're going to need the users info
+        mDatabaseReferenceUsers!!.child(auth.currentUser!!.uid).child("isLender").addListenerForSingleValueEvent(object: ValueEventListener{
+            override fun onCancelled(p0: DatabaseError) {
+
+            }
+
+            override fun onDataChange(snapshot: DataSnapshot) {
+                isLender = snapshot.value as Boolean
+                isLender?.let {
+                    isLender = it
+                }
+            }
+        })
 
         mFlingContainer = findViewById(R.id.frame)
         mFrameContainer = findViewById(R.id.frame_container)
@@ -84,7 +97,7 @@ class SwipeBorrowRequests : AppCompatActivity(), Serializable {
         mRefreshList = findViewById(R.id.refresh_list)
         mBottomNav = findViewById(R.id.bottom_nav)
         val navItem1  =  AHBottomNavigationItem(R.string.my_account, R.drawable.ic_user, R.color.colorPrimary);
-        val navItem2  =  AHBottomNavigationItem(R.string.borrow_requests, R.drawable.ic_borrow_requests_icon_1, R.color.colorAccent);
+        val navItem2 = AHBottomNavigationItem(R.string.borrow_requests, R.drawable.ic_borrow_requests_icon_1, R.color.colorAccent);
         val navItem3  =  AHBottomNavigationItem(R.string.settings, R.drawable.ic_settings, R.color.colorPrimaryDark);
 
         mEmptyContainer.visibility = View.GONE
@@ -97,7 +110,7 @@ class SwipeBorrowRequests : AppCompatActivity(), Serializable {
         mBottomNav.addItem(navItem2)
         mBottomNav.addItem(navItem3)
         mBottomNav.defaultBackgroundColor = Utils.fetchColor(R.color.white, this)
-        mBottomNav.accentColor = Utils.fetchColor(R.color.colorPrimary, this)
+        mBottomNav.accentColor = Utils.fetchColor(R.color.mainOrange, this)
         mBottomNav.inactiveColor = Utils.fetchColor(R.color.grey, this)
         mBottomNav.titleState = AHBottomNavigation.TitleState.ALWAYS_SHOW;
 
@@ -107,10 +120,14 @@ class SwipeBorrowRequests : AppCompatActivity(), Serializable {
             var intent = Intent()
             when(position){
                 0 ->{intent = Intent(this, Profile::class.java)
+                    intent.putExtra("isLender", true)
                     startActivity(intent)
                 }
                 1 ->{}
                 2 ->{
+                    intent = Intent(this, SettingsPage::class.java)
+                    intent.putExtra("isLender", true)
+                    startActivity(intent)
                 }
                 else -> {}
                 }

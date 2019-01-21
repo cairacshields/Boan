@@ -1,9 +1,12 @@
 package com.example.cairashields.boan.ui
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.CardView
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.LayoutInflater
@@ -17,6 +20,7 @@ import butterknife.ButterKnife
 import com.example.cairashields.boan.Objects.Users
 import com.example.cairashields.boan.R
 import com.example.cairashields.boan.Services.FirebaseInstanceIdService
+import com.example.cairashields.boan.stripe.FetchConnectedUserId
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
@@ -25,16 +29,16 @@ import com.stripe.android.TokenCallback
 import com.stripe.android.model.Customer
 import com.stripe.android.model.Token
 import com.stripe.android.view.CardInputWidget
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import javax.security.auth.callback.Callback
 
-class CreditCardFragment : Fragment() {
+class CreditCardFragment : AppCompatActivity() {
 
-    @BindView(R.id.card_input_widget)
-    lateinit var mCardInputWidget: CardInputWidget
     @BindView(R.id.lend)
-    lateinit var mLender: LinearLayout
+    lateinit var mLender: CardView
     @BindView(R.id.borrow)
-    lateinit var mBorrower: LinearLayout
+    lateinit var mBorrower: CardView
     @BindView(R.id.complete_card_info)
     lateinit var mDone: Button
 
@@ -43,68 +47,71 @@ class CreditCardFragment : Fragment() {
     private lateinit var auth: FirebaseAuth
 
     var isLender = false
-    fun newInstance(): CreditCardFragment {
-        return CreditCardFragment()
-    }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val root = inflater.inflate(R.layout.credit_card_fragment, container, false)
-        ButterKnife.bind(this, root)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        ButterKnife.bind(this)
+        setContentView(R.layout.credit_card_fragment)
         val database = FirebaseDatabase.getInstance()
         mDatabaseReference = database.reference
         auth = FirebaseAuth.getInstance()
 
-        mLender = root.findViewById(R.id.lend)
-        mBorrower = root.findViewById(R.id.borrow)
-        mDone = root.findViewById(R.id.complete_card_info)
-        mCardInputWidget = root.findViewById(R.id.card_input_widget)
+        mLender = findViewById(R.id.lend)
+        mBorrower = findViewById(R.id.borrow)
+        mDone = findViewById(R.id.complete_card_info)
+
+        //Used for detecting deep links
+        val action: String? = intent?.action
+        val data: Uri? = intent?.data
+
+        val code = data!!.getQueryParameter("code")
 
         mLender.setOnClickListener {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                mLender.setBackgroundColor(context!!.getColor(R.color.colorPrimary))
-                mBorrower.setBackgroundColor(context!!.getColor(R.color.white))
+                mLender.setBackgroundColor(this.getColor(R.color.colorPrimaryDark))
+                mBorrower.setBackgroundColor(this.getColor(R.color.white))
 
             }
             isLender = true
+            mDone.text = "Next"
         }
+
         mBorrower.setOnClickListener {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                mBorrower.setBackgroundColor(context!!.getColor(R.color.colorPrimary))
-                mLender.setBackgroundColor(context!!.getColor(R.color.white))
+                mBorrower.setBackgroundColor(this.getColor(R.color.colorPrimaryDark))
+                mLender.setBackgroundColor(this.getColor(R.color.white))
             }
             isLender = false
+            mDone.text = "Done"
         }
+
         mDone.setOnClickListener {
-            val cardToSave = mCardInputWidget.card
-
-            if (cardToSave == null) {
-                //Card not good
-                // mErrorDialogHandle r.showError("Invalid Card Data")
-            } else {
-                //Card info is good
-                val stripe = Stripe(context!!, "pk_test_DkwOovybuSQN6dDkVLOODzn1");
-                stripe.createToken(
-                        cardToSave,
-                        object : TokenCallback {
-                            override fun onSuccess(token: Token?) {
-                                Log.v("Token!", "Token Created!!" + token!!.getId())
-                                createUserWithCard(token.getId()); // Pass that token to your Server for further processing
+            if(isLender){
+                // Bring to category selection page
+                val intent = Intent(this, CategorySelectionPage::class.java)
+                intent.putExtra("code", code)
+                startActivity(intent)
+            }else{
+                //Just create the user
+                createUser()
+                FetchConnectedUserId.getId(code, auth.currentUser!!.uid)!!
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe( { response ->
+                            if(response.isSuccessful){
+                                Log.d("Connected user", "Creation SUCCESS " + response.body().string())
+                                Toast.makeText(this, "Creation SUCCESS", Toast.LENGTH_LONG).show()
+                            }else{
+                                Log.d("Connected user", "Creation ERROR " + response.body())
+                                Toast.makeText(this, "Creation ERROR", Toast.LENGTH_LONG).show()
                             }
-
-                            override fun onError(error: Exception?) {
-                                Log.v("Token!", "Token Not Created!!")
-                                error!!.printStackTrace()
-                                //TODO Handle what happens when card is invalid... currently app crashes *face palm*
-                            }
-
-                        })
-
+                        }, { e -> e.printStackTrace() })
             }
         }
-        return root
     }
 
-    fun createUserWithCard(token: String) {
+    fun createUser(){
+        //using this createUser method... users will need to add card info later on while using the app
         val name = auth.currentUser!!.displayName
         val email = auth.currentUser!!.email
         val firebaseToken: String?
@@ -112,16 +119,17 @@ class CreditCardFragment : Fragment() {
 
         firebaseToken = FirebaseInstanceIdService.getRefreshedToken()
         if (firebaseToken != null) {
-            val user = Users(name, email, token, isLender, firebaseToken, null, null)
+            val user = Users(name, email, null, isLender, firebaseToken, null, null, null, null, null, false, null, null, null)
             mDatabaseReference!!.child("users").child(auth.currentUser!!.uid).setValue(user).addOnCompleteListener {
                 Log.v("USER ADDED: ", "check database now.")
-                //TODO CHECK IF LENDER OR BORROWER AND SEND TO CORRECT MAIN PAGE
-                val intent = Intent(context, SwipeBorrowRequests::class.java)
+                val intent = Intent(this, BorrowForm::class.java)
+                intent.putExtra("isLender", isLender)
                 startActivity(intent)
+
             }
         } else {
             Log.v("BAD TOKEN", "firebase token is NULL")
-            Toast.makeText(activity, "FIREBASE TOKEN NULL", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "FIREBASE TOKEN NULL", Toast.LENGTH_LONG).show()
         }
     }
 }

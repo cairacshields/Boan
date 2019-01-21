@@ -8,7 +8,7 @@ import org.json.JSONObject
 
  object Charges {
 
-    fun putCharge(token: String, userEmail: String, chargeAmount: Float, userId: String): Observable<Response>? {
+    fun putCharge(token: String, userEmail: String, chargeAmount: Float, userId: String, borrowerUserId: String): Observable<Response>? {
 
         val JSON = MediaType.parse("application/json; charset=utf-8")
         val client = OkHttpClient()
@@ -20,6 +20,7 @@ import org.json.JSONObject
             json.put("userId", userId)
             json.put("email",userEmail)
             json.put("amount", chargeAmount)
+            json.put("borrowerUserId", borrowerUserId)
 
             //Add body to the request
             val body = RequestBody.create(JSON, json.toString())

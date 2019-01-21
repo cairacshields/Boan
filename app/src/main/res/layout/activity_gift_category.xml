@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@drawable/main_gradient_background">
+
+    <LinearLayout
+        tools:visibility="gone"
+        android:id="@+id/category_container"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Ready to get a lender's only gift?"
+            android:gravity="center_horizontal"
+            android:textColor="@color/white"
+            style="@style/Bold_5_black"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Choose your favorite category to get started!"
+            android:gravity="center_horizontal"
+            android:textColor="@color/white"
+            style="@style/Bold_5_black"/>
+
+        <GridLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:columnCount="2"
+            android:rowCount="2"
+            android:orientation="horizontal"
+            android:layout_marginTop="@dimen/huge_margin"
+            android:layout_gravity="center_horizontal">
+
+            <Button
+                android:background="@drawable/round_corners_button"
+                android:textColor="@color/colorPrimaryDark"
+                android:layout_margin="@dimen/medium_margin"
+                android:id="@+id/Sports"
+                android:layout_gravity="left|top"
+                android:text="Sports" />
+
+            <Button
+                android:background="@drawable/round_corners_button"
+                android:textColor="@color/colorPrimaryDark"
+                android:layout_margin="@dimen/medium_margin"
+                android:id="@+id/makeup"
+                android:layout_gravity="left|top"
+                android:text="Makeup" />
+
+            <Button
+                android:background="@drawable/round_corners_button"
+                android:textColor="@color/colorPrimaryDark"
+                android:layout_margin="@dimen/medium_margin"
+                android:id="@+id/fashion"
+                android:layout_gravity="left|top"
+                android:text="Fashion" />
+
+            <Button
+                android:background="@drawable/round_corners_button"
+                android:textColor="@color/colorPrimaryDark"
+                android:layout_margin="@dimen/medium_margin"
+                android:id="@+id/movies"
+                android:layout_gravity="left|top"
+                android:text="Movies" />
+
+            <Button
+                android:background="@drawable/round_corners_button"
+                android:textColor="@color/colorPrimaryDark"
+                android:layout_margin="@dimen/medium_margin"
+                android:id="@+id/food"
+                android:layout_gravity="left|top"
+                android:text="Food" />
+
+            <Button
+                android:background="@drawable/round_corners_button"
+                android:textColor="@color/colorPrimaryDark"
+                android:layout_margin="@dimen/medium_margin"
+                android:id="@+id/tech"
+                android:layout_gravity="left|top"
+                android:text="Tech" />
+        </GridLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        tools:visibility="visible"
+        android:gravity="center_vertical"
+        android:id="@+id/lender_address_container"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Okay cool, now..."
+            android:gravity="center_horizontal"
+            android:textColor="@color/white"
+            style="@style/Bold_5_black"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Enter your address"
+            android:gravity="center_horizontal"
+            android:textColor="@color/white"
+            style="@style/Bold_5_black"/>
+
+        <EditText
+            android:id="@+id/address_1"
+            android:layout_marginTop="@dimen/huge_margin"
+            android:layout_gravity="center"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:hint="Address 1"
+            android:padding="8dip"
+            android:background="@drawable/round_edittext" />
+        <EditText
+            android:id="@+id/address_2"
+            android:layout_marginTop="@dimen/small_margin"
+            android:layout_gravity="center"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:hint="Address 2"
+            android:padding="8dip"
+            android:background="@drawable/round_edittext" />
+        <EditText
+            android:id="@+id/state"
+            android:layout_marginTop="@dimen/small_margin"
+            android:layout_gravity="center"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:hint="State"
+            android:padding="8dip"
+            android:background="@drawable/round_edittext" />
+        <EditText
+            android:id="@+id/city"
+            android:layout_marginTop="@dimen/small_margin"
+            android:layout_gravity="center"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:hint="City"
+            android:padding="8dip"
+            android:background="@drawable/round_edittext" />
+        <EditText
+            android:id="@+id/zip"
+            android:layout_marginTop="@dimen/small_margin"
+            android:layout_gravity="center"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:hint="Zip code"
+            android:padding="8dip"
+            android:background="@drawable/round_edittext" />
+        <Button
+            android:id="@+id/done"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/round_corners_button"
+            android:layout_marginTop="@dimen/medium_margin"
+            android:layout_gravity="center"
+            android:text="done"
+            android:textColor="@color/colorPrimaryDark"/>
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>

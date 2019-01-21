@@ -16,12 +16,14 @@ public class TermAgreement {
     public String email;
     public String comment;
     public boolean accepted;
+    public boolean borrowerRepayed;
 
     public TermAgreement(){
 
     }
 
-    public TermAgreement(String id,int borrowAmount, int repayAmount, Date repayDate, String borrowerUserId, String lenderUserId, String username, String email, String comment, boolean accepted){
+    public TermAgreement(String id,int borrowAmount, int repayAmount, Date repayDate, String borrowerUserId, String lenderUserId, String username,
+                         String email, String comment, boolean accepted, boolean borrowerRepayed){
         this.id = id;
         this.borrowAmount = borrowAmount;
         this.repayAmount = repayAmount;
@@ -32,5 +34,6 @@ public class TermAgreement {
         this.email = email;
         this.comment = comment;
         this.accepted = accepted;
+        this.borrowerRepayed = borrowerRepayed;
     }
 }

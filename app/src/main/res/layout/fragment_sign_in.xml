@@ -52,7 +52,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="@dimen/small_margin"
-            style="@style/Text_black"
+            style="@style/Text_white"
             android:text="@string/forgot_password"/>
 
     </LinearLayout>

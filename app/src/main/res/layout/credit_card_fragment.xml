@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@drawable/main_gradient_background"
     android:orientation="vertical">
 
@@ -10,74 +11,80 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:textColor="@color/white"
+        android:textColor="@color/black"
         android:text="@string/which_are_you"
         android:textSize="30sp" />
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal">
-
-        <LinearLayout
-            android:id="@+id/lend"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/medium_margin"
-            android:layout_toEndOf="@+id/borrow"
-            android:orientation="vertical">
-
-            <ImageView
-                android:layout_width="70dp"
-                android:layout_height="70dp"
-                android:layout_gravity="center_horizontal"
-                android:src="@drawable/ic_icons8_donation_64"
-                android:tint="@color/white" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                style="@style/Text_white"
-                android:text="@string/lender" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/borrow"
-
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/medium_margin"
-            android:orientation="vertical">
-
-            <ImageView
-                android:layout_width="70dp"
-                android:layout_height="70dp"
-                android:src="@drawable/ic_icons8_receive_cash_64"
-                android:tint="@color/white" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                style="@style/Text_white"
-                android:text="@string/borrower" />
-        </LinearLayout>
-    </RelativeLayout>
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:layout_height="200dp"
         android:layout_marginTop="@dimen/huge_margin"
-        android:gravity="center_horizontal"
-        android:orientation="vertical"
-        android:padding="@dimen/base_padding">
+        android:paddingTop="15dip"
+        android:paddingBottom="15dip">
 
-        <com.stripe.android.view.CardInputWidget
-            android:id="@+id/card_input_widget"
+            <android.support.v7.widget.CardView
+                android:id="@+id/lend"
+                android:layout_weight="1"
+                android:layout_margin="@dimen/medium_margin"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                app:cardBackgroundColor="@color/white"
+                app:cardElevation="15dp"
+                android:orientation="vertical">
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                <ImageView
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:layout_marginTop="@dimen/medium_margin"
+                    android:layout_gravity="center_horizontal"
+                    android:src="@drawable/ic_icons8_donation_64"
+                    android:tint="@color/black" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    style="@style/Text_black"
+                    android:text="@string/lender" />
+                </LinearLayout>
+
+            </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/borrow"
+            android:layout_weight="1"
+            android:layout_margin="@dimen/medium_margin"
+            app:cardElevation="15dp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            app:cardBackgroundColor="@color/white"
+            android:orientation="vertical">
+        <LinearLayout
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical" />
+            android:layout_height="wrap_content">
+
+                <ImageView
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:layout_marginTop="@dimen/medium_margin"
+                    android:layout_gravity="center_horizontal"
+                    android:src="@drawable/ic_icons8_receive_cash_64"
+                    android:tint="@color/black" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    style="@style/Text_black"
+                    android:text="@string/borrower" />
+            </LinearLayout>
+        </android.support.v7.widget.CardView>
+    </LinearLayout>
 
 
         <Button
@@ -89,5 +96,5 @@
             android:layout_gravity="center"
             android:text="Done"
             android:textColor="@color/colorPrimaryDark"/>
-    </LinearLayout>
+
 </LinearLayout>
